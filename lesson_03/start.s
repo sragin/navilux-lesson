@@ -12,12 +12,12 @@
 _start:
    b _reset   /* Reset : Branch to _reset function */
    b .        /* Undefined Instruction : Stay here */
-   b .        /* Software Interrupt : Stay here    */
+   b software_interrupt     /* Software Interrupt : Stay here    */
    b .        /* Prefetch Abort : Stay here        */
    b .        /* Data Abort : Stay here            */
    b .        /* Reserved : Stay Here              */
-   b .        /* Normal Interrupt : Stay Here      */
-   b .        /* Fast Interrupt : Stay Here        */
+   b IRQ                    /* Normal Interrupt : Stay Here      */
+   b FIQ                    /* Fast Interrupt : Stay Here        */
 
 .comm stack, 0x10000 @ Reserve 64K stack in the BSS
 
@@ -26,6 +26,12 @@ _start:
    /* ############################################ */
 _reset:
    ldr sp, =stack+0x10000 /* Set up the stack      */
-   bl  my_main   /* Jump to main function (C code) */
-1:
-   b 1b      /* Backward branch : Stay here        */
+   bl  main   /* Jump to main function (C code) */
+   b _reset   /* Jump to _reset if kernel return */
+
+software_interrupt:
+    b swiHandler
+IRQ:
+    b irqHandler
+FIQ:
+    b _reset
