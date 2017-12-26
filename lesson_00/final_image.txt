@@ -1,0 +1,99 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+stack               0x10000           start.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+                0x0000000000000000                . = 0x0
+
+.text           0x0000000000000000       0xf2
+ *start.o(.text)
+ .text          0x0000000000000000       0x30 start.o
+                0x0000000000000000                _start
+ *main.o(.text)
+ .text          0x0000000000000030       0xb4 main.o
+                0x0000000000000030                my_putc
+                0x000000000000007c                my_puts
+                0x00000000000000c4                my_main
+ *(.rodata*)
+ .rodata        0x00000000000000e4        0xe main.o
+
+.glue_7         0x00000000000000f4        0x0
+ .glue_7        0x00000000000000f4        0x0 linker stubs
+
+.glue_7t        0x00000000000000f4        0x0
+ .glue_7t       0x00000000000000f4        0x0 linker stubs
+
+.vfp11_veneer   0x00000000000000f4        0x0
+ .vfp11_veneer  0x00000000000000f4        0x0 linker stubs
+
+.v4_bx          0x00000000000000f4        0x0
+ .v4_bx         0x00000000000000f4        0x0 linker stubs
+
+.iplt           0x00000000000000f4        0x0
+ .iplt          0x00000000000000f4        0x0 main.o
+
+.rel.dyn        0x00000000000000f4        0x0
+ .rel.iplt      0x00000000000000f4        0x0 main.o
+
+.data           0x00000000000000f2        0x0
+ *(.data*)
+ .data          0x00000000000000f2        0x0 main.o
+ .data          0x00000000000000f2        0x0 start.o
+
+.igot.plt       0x00000000000000f4        0x0
+ .igot.plt      0x00000000000000f4        0x0 main.o
+
+.bss            0x0000000000000100    0x10000
+ *(.bss*)
+ .bss           0x0000000000000100        0x0 main.o
+ .bss           0x0000000000000100        0x0 start.o
+ *(COMMON*)
+ COMMON         0x0000000000000100    0x10000 start.o
+                0x0000000000000100                stack
+LOAD main.o
+LOAD start.o
+OUTPUT(final_image.elf elf32-littlearm)
+
+.debug_info     0x0000000000000000       0x96
+ .debug_info    0x0000000000000000       0x96 main.o
+
+.debug_abbrev   0x0000000000000000       0x95
+ .debug_abbrev  0x0000000000000000       0x95 main.o
+
+.debug_aranges  0x0000000000000000       0x20
+ .debug_aranges
+                0x0000000000000000       0x20 main.o
+
+.debug_line     0x0000000000000000       0x49
+ .debug_line    0x0000000000000000       0x49 main.o
+
+.debug_str      0x0000000000000000       0xbe
+ .debug_str     0x0000000000000000       0xbe main.o
+
+.comment        0x0000000000000000       0x7f
+ .comment       0x0000000000000000       0x7f main.o
+                                         0x80 (size before relaxing)
+
+.ARM.attributes
+                0x0000000000000000       0x30
+ .ARM.attributes
+                0x0000000000000000       0x32 main.o
+ .ARM.attributes
+                0x0000000000000032       0x22 start.o
+
+.debug_frame    0x0000000000000000       0x6c
+ .debug_frame   0x0000000000000000       0x6c main.o
+
+.stab           0x0000000000000000       0xb4
+ .stab          0x0000000000000000       0xb4 start.o
+
+.stabstr        0x0000000000000000       0x1d
+ .stabstr       0x0000000000000000       0x1d start.o
