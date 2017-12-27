@@ -1,0 +1,5 @@
+*.pdf
+initramfs/
+*.o
+*.elf
+*.txt
