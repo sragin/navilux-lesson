@@ -2,11 +2,11 @@
 
 CC = arm-none-eabi-gcc
 AS = arm-none-eabi-as
-LD = arm-none-eabi-ld
+LD = arm-none-eabi-gcc
 
-CCFLAGS = -g -c -Wall -std=c99 -pedantic -nostdinc -fno-builtin -O0 -mcpu=arm926ej-s
+CCFLAGS = -g -c -Wall -std=c99 -pedantic -O0 -mcpu=arm926ej-s
 ASFLAGS = -EL -mcpu=arm926ej-s -as -W -gstabs
-LDFLAGS = -T link.ld
+LDFLAGS = -specs=nosys.specs -nostartfiles -fno-builtin -static -T link.ld 
 
 SRC_C = main.o
 SRC_ASM = start.o
@@ -23,7 +23,7 @@ start.o : start.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 $(FINAL_OUTPUT) : $(BUILD_IMAGE)
-	$(LD) $(LDFLAGS) $(BUILD_IMAGE) -o $@ -Map final_image.txt
+	$(LD) $(LDFLAGS) $(BUILD_IMAGE) -o $@ -Wl,-Map,final_image.txt
 
 clean:
-	rm *.elf *.o *.txt *~
+	rm -v -f *.elf *.o *.txt *~
