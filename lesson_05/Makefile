@@ -26,4 +26,4 @@ $(FINAL_OUTPUT) : $(BUILD_IMAGE)
 	$(LD) $(LDFLAGS) $(BUILD_IMAGE) -o $@ -Wl,-Map,final_image.txt
 
 clean:
-	rm -v -f *.elf *.o *.txt *~
+	@rm -v -f *.elf *.o *.txt *~
