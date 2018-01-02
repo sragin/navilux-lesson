@@ -31,5 +31,5 @@ SECTIONS
     . = ALIGN(4);
     /* End of user data. Heap starts from hear */
     end = .;
-	stack_top = ORIGIN(RAM) + LENGTH(RAM) - 4;
+	stack_top = ORIGIN(RAM) + LENGTH(RAM);
 }
