@@ -1,5 +1,5 @@
 /* Simple Start Up code for ARM925EJ-S Core by layright */
-
+/* Modified by sragin */ 
 .text
 .code 32
 
@@ -10,26 +10,40 @@
    /* #             Vector Table                 # */
    /* ############################################ */
 _start:
-   b _reset   /* Reset : Branch to _reset function */
+   b kernel_init /* Reset : Branch to _reset function */
    b .        /* Undefined Instruction : Stay here */
-   b software_interrupt     /* Software Interrupt : Stay here    */
+   b swi      /* Software Interrupt : Stay here    */
    b .        /* Prefetch Abort : Stay here        */
    b .        /* Data Abort : Stay here            */
    b .        /* Reserved : Stay Here              */
-   b IRQ                    /* Normal Interrupt : Stay Here      */
-   b IRQ                    /* Fast Interrupt : Stay Here        */
+   b IRQ      /* Normal Interrupt : Stay Here      */
+   b IRQ      /* Fast Interrupt : Stay Here        */
 
-.comm stack, 0x10000 @ Reserve 64K stack in the BSS
+.equ svc_stack, 0x7A80000
+.equ irq_stack, 0x7B00000
+.equ sys_stack, 0x7B80000
+.global kernel_init
+kernel_init:
+	ldr		sp, =stack_top // stack size = 4MB (0x40,0000)
 
-   /* ############################################ */
-   /* #             Reset Function               # */
-   /* ############################################ */
-_reset:
-   ldr sp, =stack+0x10000 /* Set up the stack      */
+	msr		cpsr_c, #0xc0|0x13	//SVC mode
+	ldr		r0, =svc_stack
+	sub		sp, r0, #4
+
+	msr		cpsr_c, #0xc0|0x12	//IRQ mode
+	ldr		r0, =irq_stack
+	sub		sp, r0, #4
+
+	msr		cpsr_c, #0xc0|0x1f	//SYSTEM mode
+	ldr		r0, =sys_stack
+	sub		sp, r0, #4
+
+	msr		cpsr_c, #0xc0|0x13
+
    bl  main   /* Jump to main function (C code) */
-   b _reset   /* Jump to _reset if kernel return */
+   b _start   /* Jump to _reset if kernel return */
 
-software_interrupt:
+swi:
     stmfd   sp!, {r0-r12,r14}
     mrs     r1, spsr
     stmfd   sp!, {r1}
@@ -43,7 +57,7 @@ software_interrupt:
 IRQ:
     sub     lr, lr, #4
     stmfd   sp!, {lr}
-    stmfd   sp!, {r0-r14}
+    stmfd   sp!, {r0-r14}^
     mrs     r1, spsr
     stmfd   sp!, {r1}
     bl      irqHandler

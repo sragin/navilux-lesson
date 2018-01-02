@@ -1,4 +1,5 @@
 /* Link script for ARM925EJ-S Core by layright */
+/* Modified by sragin */
 
 OUTPUT_FORMAT("elf32-littlearm")
 OUTPUT_ARCH(arm)
@@ -6,7 +7,8 @@ ENTRY (_start)
 
 MEMORY
 {
-    ram (rwx) : ORIGIN = 0x00000000, LENGTH = 0x00100000
+	/* default RAM size is 128M on QEMU */
+    RAM (rwx) : ORIGIN = 0x00000000, LENGTH = 0x10000000
 }
 SECTIONS
 {
@@ -14,7 +16,7 @@ SECTIONS
    .text :
    {
       *start.o(.text)
-      *main.o(.text)
+	  *(.text*)
       *(.rodata*)
    }
    .data :
@@ -29,7 +31,5 @@ SECTIONS
     . = ALIGN(4);
     /* End of user data. Heap starts from hear */
     end = .;
-
-    /* Stack starts at end of ram */
-    _estack = ORIGIN(ram) + LENGTH(ram) - 4;
+	stack_top = ORIGIN(RAM) + LENGTH(RAM) - 4;
 }

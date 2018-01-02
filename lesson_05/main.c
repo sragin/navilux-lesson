@@ -15,9 +15,23 @@ void swiHandler(unsigned int syscallnum)
     my_puts(strTmp);
 }
 
+#define PIC_IRQ_STATUS	((volatile unsigned long int*)0x14000000)
+#define TIMERINT1		6
+#define TIMER1_ICR 		((volatile unsigned long int*)0x1300010C)
+
 void irqHandler(void)
 {
-    my_puts("irq interrupt\n");
+	unsigned long int pic_irq_status = *PIC_IRQ_STATUS;
+
+	if (pic_irq_status)
+	{
+		if (pic_irq_status == (1 << TIMERINT1))
+		{
+			my_puts("timer1 interrupt\n");
+			// clear interrupt
+    		*TIMER1_ICR = 1;
+		}
+	}
 }
 
 void my_putc(char c)
@@ -46,14 +60,13 @@ void msleep(int msec)
 #define PIC_IRQ_ENCLR ((volatile unsigned long int*)0x1400000C)
 #define TIMER1_LOAD ((volatile unsigned long int*)0x13000100)
 #define TIMER1_CTRL ((volatile unsigned long int*)0x13000108)
-#define TIMER1_ICR ((volatile unsigned long int*)0x1300010C)
 
 void timer1_init(void)
 {
 	char strTmp[100];
-    *PIC_IRQ_ENCLR = (1 << 6);
+    *PIC_IRQ_ENCLR = (1 << TIMERINT1);
     *TIMER1_ICR = 1;
-    *PIC_IRQ_ENSET |= (1 << 6);
+    *PIC_IRQ_ENSET |= (1 << TIMERINT1);
 	sprintf(strTmp, "PIC_IRQ_ENSET = 0x%lx\n", *PIC_IRQ_ENSET);
 	my_puts(strTmp);
     
