@@ -17,7 +17,7 @@ _start:
    b .        /* Data Abort : Stay here            */
    b .        /* Reserved : Stay Here              */
    b IRQ                    /* Normal Interrupt : Stay Here      */
-   b FIQ                    /* Fast Interrupt : Stay Here        */
+   b IRQ                    /* Fast Interrupt : Stay Here        */
 
 .comm stack, 0x10000 @ Reserve 64K stack in the BSS
 
@@ -41,6 +41,14 @@ software_interrupt:
     ldmfd   sp!, {r0-r12,pc}^
 
 IRQ:
-    b irqHandler
-FIQ:
-    b _reset
+    sub     lr, lr, #4
+    stmfd   sp!, {lr}
+    stmfd   sp!, {r0-r14}
+    mrs     r1, spsr
+    stmfd   sp!, {r1}
+    bl      irqHandler
+    ldmfd   sp!, {r1}
+    msr     spsr_cxsf, r1
+    ldmfd   sp!, {r0-r14}^
+    ldmfd   sp!, {pc}^
+
