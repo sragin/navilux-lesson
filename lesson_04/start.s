@@ -16,8 +16,8 @@ _start:
    b .        /* Prefetch Abort : Stay here        */
    b .        /* Data Abort : Stay here            */
    b .        /* Reserved : Stay Here              */
-   b IRQ                    /* Normal Interrupt : Stay Here      */
-   b FIQ                    /* Fast Interrupt : Stay Here        */
+   b IRQ					/* Normal Interrupt : Stay Here      */
+   b _reset		/* Fast Interrupt : Branch to _reset function */
 
 .comm stack, 0x10000 @ Reserve 64K stack in the BSS
 
@@ -30,17 +30,15 @@ _reset:
    b _reset   /* Jump to _reset if kernel return */
 
 software_interrupt:
-    stmfd   sp!, {r0-r12,r14}
+    PUSH	{r0-r12,r14}
     mrs     r1, spsr
-    stmfd   sp!, {r1}
+    PUSH	{r1}
     ldr     r0, [lr, #-4]
     bic     r0, r0, #0xff000000
     bl      swiHandler
-    ldmfd   sp!, {r1}
+    POP		{r1}
     msr     spsr_cxsf, r1
-    ldmfd   sp!, {r0-r12,pc}^
+    POP		{r0-r12,pc}
 
 IRQ:
     b irqHandler
-FIQ:
-    b _reset

@@ -46,7 +46,7 @@ int main (void)
 {
     while(1)
     {
-        __asm__("swi 77");
+        __asm__("svc 77");
         msleep(1000);
     }
 
