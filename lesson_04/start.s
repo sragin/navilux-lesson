@@ -37,7 +37,7 @@ software_interrupt:
     bic     r0, r0, #0xff000000
     bl      swiHandler
     POP		{r1}
-    msr     spsr_cxsf, r1
+    msr     spsr, r1
     POP		{r0-r12,pc}
 
 IRQ:
