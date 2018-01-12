@@ -42,5 +42,3 @@ software_interrupt:
 
 IRQ:
     b irqHandler
-FIQ:
-    b _reset
