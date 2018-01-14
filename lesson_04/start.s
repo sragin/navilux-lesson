@@ -31,14 +31,10 @@ _reset:
 
 software_interrupt:
     PUSH	{r0-r12,r14}
-    mrs     r1, spsr
-    PUSH	{r1}
     ldr     r0, [lr, #-4]
     bic     r0, r0, #0xff000000
     bl      swiHandler
-    POP		{r1}
-    msr     spsr, r1
-    POP		{r0-r12,pc}
+    LDMFD	sp!,{r0-r12,pc}^
 
 IRQ:
     b irqHandler
