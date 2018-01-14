@@ -1,4 +1,5 @@
 # Makefile for for ARM925EJ-S Core by layright
+# Modified by jp
 
 CC = arm-none-eabi-gcc
 AS = arm-none-eabi-as
