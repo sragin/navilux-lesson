@@ -11,7 +11,7 @@ void my_puts(const char *str);
 void swiHandler(unsigned int syscallnum)
 {
     char strTmp[100];
-    sprintf(strTmp, "system call %d\n", syscallnum);
+    sprintf(strTmp, "system call %d\n\r", syscallnum);
     my_puts(strTmp);
 }
 
@@ -27,7 +27,7 @@ void irqHandler(void)
 	{
 		if (pic_irq_status == (1 << TIMERINT1))
 		{
-			my_puts("timer1 interrupt\n");
+			my_puts("timer1 interrupt\n\r");
 			// clear interrupt
     		*TIMER1_ICR = 1;
 		}
