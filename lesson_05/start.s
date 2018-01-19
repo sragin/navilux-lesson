@@ -10,18 +10,19 @@
    /* #             Vector Table                 # */
    /* ############################################ */
 _start:
-   b kernel_init /* Reset : Branch to _reset function */
+   b kernel_init /* Reset : Branch to kernel_init  */
    b .        /* Undefined Instruction : Stay here */
-   b swi      /* Software Interrupt : Stay here    */
+   b swi      /* Software Interrupt : Go to swi    */
    b .        /* Prefetch Abort : Stay here        */
    b .        /* Data Abort : Stay here            */
    b .        /* Reserved : Stay Here              */
-   b IRQ      /* Normal Interrupt : Stay Here      */
-   b IRQ      /* Fast Interrupt : Stay Here        */
+   b IRQ      /* Normal Interrupt : Go to IRQ      */
+   b _start   /* Fast Interrupt : Reset            */
 
-.equ svc_stack, 0x7A80000
-.equ irq_stack, 0x7B00000
-.equ sys_stack, 0x7B80000
+/* 각각 512K씩 스택 공간을 확보함 0x80000 = 512K */
+.equ svc_stack, 0x7E80000
+.equ irq_stack, 0x7F00000
+.equ sys_stack, 0x7F80000
 .global kernel_init
 kernel_init:
 	ldr		sp, =stack_top // stack size = 4MB (0x40,0000)
@@ -45,13 +46,9 @@ kernel_init:
 
 swi:
     stmfd   sp!, {r0-r12,r14}
-    mrs     r1, spsr
-    stmfd   sp!, {r1}
     ldr     r0, [lr, #-4]
     bic     r0, r0, #0xff000000
     bl      swiHandler
-    ldmfd   sp!, {r1}
-    msr     spsr_cxsf, r1
     ldmfd   sp!, {r0-r12,pc}^
 
 IRQ:
