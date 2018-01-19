@@ -56,13 +56,7 @@ swi:
 
 IRQ:
     sub     lr, lr, #4
-    stmfd   sp!, {lr}
-    stmfd   sp!, {r0-r14}^
-    mrs     r1, spsr
-    stmfd   sp!, {r1}
+    stmfd   sp!, {r0-r12,lr}
     bl      irqHandler
-    ldmfd   sp!, {r1}
-    msr     spsr_cxsf, r1
-    ldmfd   sp!, {r0-r14}^
-    ldmfd   sp!, {pc}^
+    ldmfd   sp!, {r0-r12,pc}^
 
