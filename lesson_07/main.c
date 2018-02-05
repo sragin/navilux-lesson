@@ -21,7 +21,7 @@ void swiHandler(unsigned int syscallnum)
 
 void irqHandler(void)
 {
-	unsigned long int pic_irq_status = *PIC_IRQ_STATUS;
+	unsigned int pic_irq_status = *PIC_IRQ_STATUS;
 
 	if (pic_irq_status)
 	{
