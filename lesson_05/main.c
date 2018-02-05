@@ -11,7 +11,7 @@ void my_puts(const char *str);
 void swiHandler(unsigned int syscallnum)
 {
     char strTmp[100];
-    sprintf(strTmp, "system call %d\n", syscallnum);
+    sprintf(strTmp, "system call %d\n\r", syscallnum);
     my_puts(strTmp);
 }
 
@@ -27,7 +27,7 @@ void irqHandler(void)
 	{
 		if (pic_irq_status == (1 << TIMERINT1))
 		{
-			my_puts("timer1 interrupt\n");
+			my_puts("timer1 interrupt\n\r");
 			// clear interrupt
     		*TIMER1_ICR = 1;
 		}
@@ -67,7 +67,7 @@ void timer1_init(void)
     *PIC_IRQ_ENCLR = (1 << TIMERINT1);
     *TIMER1_ICR = 1;
     *PIC_IRQ_ENSET |= (1 << TIMERINT1);
-	sprintf(strTmp, "PIC_IRQ_ENSET = 0x%lx\n", *PIC_IRQ_ENSET);
+	sprintf(strTmp, "PIC_IRQ_ENSET = 0x%lx\n\r", *PIC_IRQ_ENSET);
 	my_puts(strTmp);
     
     *TIMER1_LOAD = 1000000;
@@ -91,17 +91,17 @@ void irq_disable(void)
 
 int main (void)
 {
-	my_puts("init\n");
+	my_puts("init\n\r");
 	timer1_init();
-	my_puts("start\n");
+	my_puts("start\n\r");
     timer1_start();
 
-	my_puts("irq en\n");
+	my_puts("irq en\n\r");
     irq_enable();
 
     while(1)
     {
-        __asm__("swi 77");
+        __asm__("svc 77");
         msleep(1000);
     }
 

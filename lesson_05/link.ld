@@ -8,7 +8,7 @@ ENTRY (_start)
 MEMORY
 {
 	/* default RAM size is 128M on QEMU */
-    RAM (rwx) : ORIGIN = 0x00000000, LENGTH = 0x10000000
+    RAM (rwx) : ORIGIN = 0x00000000, LENGTH = 0x8000000
 }
 SECTIONS
 {
