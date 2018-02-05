@@ -20,9 +20,9 @@ _start:
    b _start   /* Fast Interrupt : Reset            */
 
 /* 각각 512K씩 스택 공간을 확보함 0x80000 = 512K */
-.equ svc_stack, 0x7E80000
-.equ irq_stack, 0x7F00000
-.equ sys_stack, 0x7F80000
+.equ svc_stack, 0x0300000
+.equ irq_stack, 0x0380000
+.equ sys_stack, 0x0400000 /* 0x0400000 = 4MB */
 .global kernel_init
 kernel_init:
 	ldr		sp, =stack_top // stack size = 4MB (0x40,0000)
